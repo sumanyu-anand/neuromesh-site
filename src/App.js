@@ -207,7 +207,7 @@ function App() {
       {/* Footer */}
       <footer className="footer section-divider" id="contact" data-aos="fade-up">
         <h2>Let’s Connect</h2>
-        <p><strong>Email:</strong> hello@neuromeshtechlab.com | <strong>Phone:</strong> +91-XXXXXXXXXX</p>
+        <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
         <div className="socials">
           <a href="#">Blogs</a>
           <a href="#">Instagram</a>
