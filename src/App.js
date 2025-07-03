@@ -74,10 +74,10 @@ function App() {
       <header className={`navbar ${isDarkMode ? 'dark' : ''}`}>
         <div className="logo">
           {/* <img src="/images/logo.png" alt="NeuroMesh Logo" /> */}
-          <img
-        src={isDarkMode ? "/images/Logo_Dark.png" : "/images/Logo_Light.png"}
-        alt="NeuroMesh Logo"
-         />
+          <img 
+            src={`${process.env.PUBLIC_URL}/${isDarkMode ? "images/Logo_Dark.png" : "images/Logo_Light.png"}`} 
+            alt="NeuroMesh Logo"
+          />
         </div>
         <nav>
           <a href="#services" className={activeSection === 'services' ? 'active' : ''}>Services</a>
@@ -124,7 +124,7 @@ function App() {
           { title: 'AI solutions', img: 'ai.jpg', desc: 'Use analytics to gain insights and make smarter decisions.', details: 'From machine learning to data-driven decision-making, we help integrate AI into your tools and processes.' }
         ].map((service, i) => (
           <div className="card hover-3d" key={i} data-aos="zoom-in">
-            <img src={`/images/${service.img}`} alt={service.title} />
+            <img src={`${process.env.PUBLIC_URL}/images/${service.img}`} alt={service.title} />
             <h3>{service.title}</h3>
             <p>{service.desc}</p>
             <button className="btn-outline" onClick={() => {
