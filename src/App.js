@@ -98,7 +98,7 @@ function App() {
           {['hero1.jpg', 'hero2.jpg', 'hero3.jpg', 'hero4.jpg'].map((img, i) => (
             <img
               key={i}
-              src={`/images/${img}`}
+              src={`${process.env.PUBLIC_URL}/images/${img}`} // ✅ Correct for GitHub Pages
               alt={`Slide ${i + 1}`}
               className={`slide ${i === currentSlide ? 'active' : ''}`}
             />
