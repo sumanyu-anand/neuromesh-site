@@ -1,5 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
+import emailjs from 'emailjs-com';
+import { useRef } from 'react';
 import './style.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -60,6 +62,24 @@ function App() {
     setIsDarkMode(newMode);
     document.body.classList.toggle('dark-mode', newMode);
     localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
+
+  const formRef = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+    console.log('Attempting to send form:', formRef.current);
+
+    emailjs.sendForm('service_v38tqyx', 'template_z8l19lb', formRef.current, 'nx1917tgrD-YS-7cl')
+      .then((result) => {
+        console.log('Success:', result.text);
+        alert('Message sent successfully! We will revert back to you within 2-3 Business Days');
+      }, (error) => {
+        console.error('EmailJS Error:', error.text);
+        alert('Failed to send message due to issues in the email service. Sorry for the inconvinience. You can send email directly to the inquiry@neuro-mesh.com else please try again later.');
+      });
+
+    e.target.reset();
   };
 
   const scrollToTop = () => {
@@ -204,7 +224,7 @@ function App() {
         ))}
       </section>
 
-      {/* Footer */}
+      {/* Footer
       <footer className="footer section-divider" id="contact" data-aos="fade-up">
         <h2>Let’s Connect</h2>
         <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
@@ -213,7 +233,73 @@ function App() {
           <a href="#">Instagram</a>
           <a href="#">LinkedIn</a>
         </div>
+      </footer> */}
+
+      {/* <footer className="footer section-divider" id="contact" data-aos="fade-up">
+        <h2>Let’s Connect</h2>
+        <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
+
+        <form ref={formRef} onSubmit={sendEmail} className="contact-form">
+          <input type="text" name="from_name" placeholder="Your Name" required />
+          <input type="email" name="from_email" placeholder="Your Email" required />
+          <input type="tel" name="phone" placeholder="Phone (optional)" />
+          <select name="service" required>
+            <option value="">Select a service</option>
+            <option value="App Development">App Development</option>
+            <option value="AI Solutions">AI Solutions</option>
+            <option value="Consulting">Consulting</option>
+            <option value="Other">Other</option>
+          </select>
+          <textarea name="message" placeholder="Your Message / Requirements" required></textarea>
+          <button type="submit" className="btn-primary">Send Message</button>
+        </form>
+         
+        <div className="socials">
+          <a href="#">Blogs</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </footer> */}
+
+      <footer className="footer section-divider" id="contact" data-aos="fade-up">
+        <div className="footer-content">
+          {/* Left Side - Contact Info + Social */}
+          <div className="footer-left">
+            <h2>Let’s Connect</h2>
+            <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com</p>
+            <p><strong>Phone:</strong> +91-7776994297</p>
+            
+            <div className="social-icons">
+              <a href="#">Blogs</a>
+              <a href="#">Instagram</a>
+              <a href="#">LinkedIn</a>
+            </div>
+          </div>
+
+          {/* Right Side - Contact Form */}
+          <form ref={formRef} onSubmit={sendEmail} className="contact-form">
+            <h3>Send us a message</h3>
+            <input type="text" name="from_name" placeholder="Your Name" required />
+            <input type="email" name="from_email" placeholder="Your Email" required />
+            <input type="tel" name="phone" placeholder="Phone (optional)" />
+            <select name="service" required>
+              <option value="">Select a service</option>
+              <option value="App Development">App Development</option>
+              <option value="AI Solutions">AI Solutions</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Other">Other</option>
+            </select>
+            <textarea name="message" placeholder="Your Message / Requirements" required></textarea>
+            <button type="submit" className="btn-primary">Send Message</button>
+          </form>
+        </div>
+
+        {/* Footer Bottom */}
+        <div className="footer-bottom">
+          <p>© {new Date().getFullYear()} NeuroMesh Tech Labs. All rights reserved.</p>
+        </div>
       </footer>
+
 
       {/* Scroll to Top */}
       {showScrollTop && (
