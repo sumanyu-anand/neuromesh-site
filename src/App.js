@@ -266,7 +266,7 @@ function App() {
           {/* Left Side - Contact Info + Social */}
           <div className="footer-left">
             <h2>Let’s Connect</h2>
-            <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com</p>
+            <p><strong>Email:</strong> inquiry@neuro-mesh.com</p>
             <p><strong>Phone:</strong> +91-7776994297</p>
             
             <div className="social-icons">
