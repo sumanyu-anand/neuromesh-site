@@ -471,7 +471,8 @@ nav .btn-primary::after {
 nav .btn-primary:hover::after,
 nav .btn-primary.active::after {
   width: 100%;
+  background: #0a93b7;
 }
 body.dark-mode nav .btn-primary::after {
-  background: #121212;
+   background: #5ab4ff;
 }
