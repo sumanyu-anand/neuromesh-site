@@ -1,27 +1,19 @@
 /* ───────────────────────────────────────────
    Global Styles
 ─────────────────────────────────────────── */
-html, body {
-  /* Ensure no overflow restriction for sticky elements */
-  overflow-x: hidden; /* Keep this to prevent horizontal scroll */
-  overflow-y: scroll; /* Explicitly enable vertical scroll, good practice */
-  overflow: visible; /* Explicitly set to visible, overriding potential hidden */
-  -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS */
-}
-
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: #ffffff;
   color: #333;
-  /* overflow-x: hidden; <--- This was already here. Ensure no other 'overflow' rules. */
+  overflow-x: hidden;
   transition: background 0.3s ease, color 0.3s ease;
   scroll-behavior: smooth;
 }
 
-main {
-  /* Ensure the main content area doesn't restrict sticky elements */
-  overflow: visible; /* Or remove any conflicting overflow properties if they exist */
+body.dark-mode {
+  background-color: #121212;
+  color: #eee;
 }
 
 /* ───────────────────────────────────────────
