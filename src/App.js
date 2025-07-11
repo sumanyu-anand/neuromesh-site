@@ -87,7 +87,13 @@ function App() {
     e.preventDefault();
     console.log('Attempting to send form:', formRef.current);
 
-    emailjs.sendForm('service_v38tqyx', 'template_z8l19lb', formRef.current, 'nx1917tgrD-YS-7cl')
+    // IMPORTANT CHANGE HERE: Use the environment variable
+    emailjs.sendForm(
+      'service_v38tqyx',
+      'template_z8l19lb',
+      formRef.current,
+      process.env.REACT_APP_EMAILJS_PUBLIC_KEY // <--- Changed this line
+    )
       .then((result) => {
         console.log('Success:', result.text);
         alert('Message sent successfully! We will revert back to you within 2-3 Business Days');
@@ -98,7 +104,7 @@ function App() {
 
     e.target.reset();
   };
-
+  
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
