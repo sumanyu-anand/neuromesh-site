@@ -16,6 +16,7 @@ function App() {
   const [activeSection, setActiveSection] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false });
@@ -91,25 +92,26 @@ function App() {
       <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
 
       {/* Navbar */}
-      <header className={`navbar ${isDarkMode ? 'dark' : ''}`}>
+       <header className={`navbar ${isDarkMode ? 'dark' : ''}`}>
         <div className="logo">
-          {/* <img src="/images/logo.png" alt="NeuroMesh Logo" /> */}
-          <img 
-            src={`${process.env.PUBLIC_URL}/${isDarkMode ? "images/Logo_Dark.png" : "images/Logo_Light.png"}`} 
-            alt="NeuroMesh Logo"
-          />
+          <img src={`${process.env.PUBLIC_URL}/${isDarkMode ? "images/Logo_Dark.png" : "images/Logo_Light.png"}`} alt="NeuroMesh Logo" />
         </div>
-        <nav>
-          <a href="#services" className={activeSection === 'services' ? 'active' : ''}>Services</a>
-          <a href="#about" className={activeSection === 'about' ? 'active' : ''}>About</a>
-          <a href="#faq" className={activeSection === 'faq' ? 'active' : ''}>FAQ</a>
-          <a href="#contact" className={`btn-primary ${activeSection === 'contact' ? 'active' : ''}`}>Get started</a>
+
+        <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <div className={`bar ${isMenuOpen ? 'open' : ''}`}></div>
+          <div className={`bar ${isMenuOpen ? 'open' : ''}`}></div>
+          <div className={`bar ${isMenuOpen ? 'open' : ''}`}></div>
+        </button>
+
+        <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+          <a href="#services" className={activeSection === 'services' ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>Services</a>
+          <a href="#about" className={activeSection === 'about' ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>About</a>
+          <a href="#faq" className={activeSection === 'faq' ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>FAQ</a>
+          <a href="#contact" className={`btn-primary ${activeSection === 'contact' ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}>Get started</a>
           <button className="toggle-theme" onClick={toggleDarkMode}>
-            {isDarkMode ? <FaSun /> : <FaMoon />}
-            <span className="theme-label">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            {isDarkMode ? <FaSun /> : <FaMoon />}<span className="theme-label">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
         </nav>
-  
       </header>
 
       {/* Hero Slideshow */}
@@ -224,42 +226,7 @@ function App() {
         ))}
       </section>
 
-      {/* Footer
-      <footer className="footer section-divider" id="contact" data-aos="fade-up">
-        <h2>Let’s Connect</h2>
-        <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
-        <div className="socials">
-          <a href="#">Blogs</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </footer> */}
-
-      {/* <footer className="footer section-divider" id="contact" data-aos="fade-up">
-        <h2>Let’s Connect</h2>
-        <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
-
-        <form ref={formRef} onSubmit={sendEmail} className="contact-form">
-          <input type="text" name="from_name" placeholder="Your Name" required />
-          <input type="email" name="from_email" placeholder="Your Email" required />
-          <input type="tel" name="phone" placeholder="Phone (optional)" />
-          <select name="service" required>
-            <option value="">Select a service</option>
-            <option value="App Development">App Development</option>
-            <option value="AI Solutions">AI Solutions</option>
-            <option value="Consulting">Consulting</option>
-            <option value="Other">Other</option>
-          </select>
-          <textarea name="message" placeholder="Your Message / Requirements" required></textarea>
-          <button type="submit" className="btn-primary">Send Message</button>
-        </form>
-         
-        <div className="socials">
-          <a href="#">Blogs</a>
-          <a href="#">Instagram</a>
-          <a href="#">LinkedIn</a>
-        </div>
-      </footer> */}
+   
 
       <footer className="footer section-divider" id="contact" data-aos="fade-up">
         <div className="footer-content">
@@ -273,7 +240,7 @@ function App() {
               <a href="#">Blogs</a>
               <a href="#">Instagram</a>
               <a href="#">LinkedIn</a>
-            </div>
+            </div>    
           </div>
 
           {/* Right Side - Contact Form */}
@@ -310,6 +277,44 @@ function App() {
 }
 
 export default App;
+
+
+   {/* Footer
+      <footer className="footer section-divider" id="contact" data-aos="fade-up">
+        <h2>Let’s Connect</h2>
+        <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
+        <div className="socials">
+          <a href="#">Blogs</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </footer> */}
+
+      {/* <footer className="footer section-divider" id="contact" data-aos="fade-up">
+        <h2>Let’s Connect</h2>
+        <p><strong>Email:</strong> sumanyu.anand@neuro-mesh.com | <strong>Phone:</strong> +91-7776994297</p>
+
+        <form ref={formRef} onSubmit={sendEmail} className="contact-form">
+          <input type="text" name="from_name" placeholder="Your Name" required />
+          <input type="email" name="from_email" placeholder="Your Email" required />
+          <input type="tel" name="phone" placeholder="Phone (optional)" />
+          <select name="service" required>
+            <option value="">Select a service</option>
+            <option value="App Development">App Development</option>
+            <option value="AI Solutions">AI Solutions</option>
+            <option value="Consulting">Consulting</option>
+            <option value="Other">Other</option>
+          </select>
+          <textarea name="message" placeholder="Your Message / Requirements" required></textarea>
+          <button type="submit" className="btn-primary">Send Message</button>
+        </form>
+         
+        <div className="socials">
+          <a href="#">Blogs</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </footer> */}
 
 // // import React, { useEffect, useState } from 'react';
 // // import './style.css';
