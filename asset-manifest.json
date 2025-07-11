@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/neuromesh-site/static/css/main.2f14e61c.css",
-    "main.js": "/neuromesh-site/static/js/main.f5c091bb.js",
+    "main.js": "/neuromesh-site/static/js/main.c18ea3f2.js",
     "index.html": "/neuromesh-site/index.html",
     "main.2f14e61c.css.map": "/neuromesh-site/static/css/main.2f14e61c.css.map",
-    "main.f5c091bb.js.map": "/neuromesh-site/static/js/main.f5c091bb.js.map"
+    "main.c18ea3f2.js.map": "/neuromesh-site/static/js/main.c18ea3f2.js.map"
   },
   "entrypoints": [
     "static/css/main.2f14e61c.css",
-    "static/js/main.f5c091bb.js"
+    "static/js/main.c18ea3f2.js"
   ]
 }
