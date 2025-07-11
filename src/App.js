@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import emailjs from 'emailjs-com';
 import { useRef } from 'react';
@@ -7,10 +6,22 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
+// Add this helper function to get the initial dark mode state from localStorage
+const getInitialDarkMode = () => {
+  // Check if window object is available (important for server-side rendering or environments without DOM)
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme');
+    // If 'theme' is explicitly 'dark', return true. Otherwise, default to false (light mode).
+    return savedTheme === 'dark';
+  }
+  return false; // Default to light mode if not in a browser environment
+};
+
 function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openFAQ, setOpenFAQ] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Initialize isDarkMode directly from localStorage using the helper function
+  const [isDarkMode, setIsDarkMode] = useState(getInitialDarkMode());
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState('');
@@ -18,40 +29,44 @@ function App() {
   const [selectedService, setSelectedService] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-useEffect(() => {
-  AOS.init({ duration: 1000, once: false });
+  // This useEffect runs once on component mount for AOS and scroll handling
+  useEffect(() => {
+    AOS.init({ duration: 1000, once: false });
 
-  const saved = localStorage.getItem('theme');
-  if (saved === 'dark') setIsDarkMode(true);
+    /* —— SCROLL HANDLER —— */
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
 
-  /* —— SCROLL HANDLER —— */
-  const handleScroll = () => {
-    setShowScrollTop(window.scrollY > 300);
+      // progress bar
+      const total = document.body.scrollHeight - window.innerHeight;
+      setScrollProgress((window.scrollY / total) * 100);
 
-    // progress bar
-    const total = document.body.scrollHeight - window.innerHeight;
-    setScrollProgress((window.scrollY / total) * 100);
-
-    // sections to watch (add hero if you like)
-    const ids = ['services', 'about', 'faq', 'contact'];   // or ['hero', …]
-
-    let found = '';              // default → none active
-    for (const id of ids) {
-      const el = document.getElementById(id);
-      if (!el) continue;
-      const r = el.getBoundingClientRect();
-      if (r.top <= 100 && r.bottom >= 100) {
-        found = id;
-        break;
+      // sections to watch (add hero if you like)
+      const ids = ['services', 'about', 'faq', 'contact'];
+      let found = ''; // default → none active
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        if (r.top <= 100 && r.bottom >= 100) {
+          found = id;
+          break;
+        }
       }
-    }
-    setActiveSection(found);     // '' when top of page
-  };
+      setActiveSection(found); // '' when top of page
+    };
 
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []); // Empty dependency array means this runs once
 
+  // This useEffect handles updating the body class and localStorage whenever isDarkMode changes
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]); // This effect runs when isDarkMode changes
+
+  // Hero Slideshow interval
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % 4);
@@ -63,11 +78,9 @@ useEffect(() => {
     setOpenFAQ(openFAQ === index ? null : index);
   };
 
+  // Simplified toggleDarkMode function
   const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    document.body.classList.toggle('dark-mode', newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    setIsDarkMode(prevMode => !prevMode);
   };
 
   const formRef = useRef();
@@ -82,7 +95,7 @@ useEffect(() => {
         alert('Message sent successfully! We will revert back to you within 2-3 Business Days');
       }, (error) => {
         console.error('EmailJS Error:', error.text);
-        alert('Failed to send message due to issues in the email service. Sorry for the inconvinience. You can send email directly to the inquiry@neuro-mesh.com else please try again later.');
+        alert('Failed to send message due to issues in the email service. Sorry for the inconvenience. You can send email directly to the inquiry@neuro-mesh.com else please try again later.');
       });
 
     e.target.reset();
@@ -95,81 +108,81 @@ useEffect(() => {
   return (
     <main>
       <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
-          {/* ───────── Navbar ───────── */}
-          <header className="navbar">
-            <div className="navbar-inner">{/* NEW wrapper */} 
-              {/* logo */}
-              <div className="logo">
-                <img
-                 src={`${process.env.PUBLIC_URL}/${
-                    isDarkMode ? 'images/Logo_Dark.png' : 'images/Logo_Light.png'
-                  }`}
-                  alt="NeuroMesh logo"
+            {/* ───────── Navbar ───────── */}
+            <header className="navbar">
+              <div className="navbar-inner">{/* NEW wrapper */}
+                {/* logo */}
+                <div className="logo">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/${
+                      isDarkMode ? 'images/Logo_Dark.png' : 'images/Logo_Light.png'
+                    }`}
+                    alt="NeuroMesh logo"
+                  />
+                </div>
+
+                {/* hamburger */}
+                <button
+                  className={`hamburger ${isMenuOpen ? 'open' : ''}`}
+                  onClick={() => setIsMenuOpen(o => !o)}
+                  aria-label="Toggle navigation"
+                >
+                  <span className="bar" />
+                  <span className="bar" />
+                  <span className="bar" />
+                </button>
+
+                {/* nav links */}
+                <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+                  <a
+                    href="#services"
+                    className={activeSection === 'services' ? 'active' : ''}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Services
+                  </a>
+                  <a
+                    href="#about"
+                    className={activeSection === 'about' ? 'active' : ''}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    About
+                  </a>
+                  <a
+                    href="#faq"
+                    className={activeSection === 'faq' ? 'active' : ''}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    FAQ
+                  </a>
+
+
+                  {/* CTA pill */}
+                  <a
+                    href="#contact"
+                    className={`btn-primary ${activeSection === 'contact' ? 'active' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Get&nbsp;started
+                  </a>
+
+                  {/* icon‑only theme toggle */}
+                  <button
+                    className="theme-toggle"
+                    onClick={toggleDarkMode}
+                    aria-label="Toggle theme"
+                  >
+                    {isDarkMode ? <FaSun /> : <FaMoon />}
+                  </button>
+                </nav>
+
+                {/* contained progress bar */}
+                <div
+                  className="scroll-indicator"
+                  style={{ width: `${scrollProgress}%` }}
                 />
               </div>
-
-              {/* hamburger */}
-              <button
-                className={`hamburger ${isMenuOpen ? 'open' : ''}`}
-                onClick={() => setIsMenuOpen(o => !o)}
-                aria-label="Toggle navigation"
-              >
-                <span className="bar" />
-                <span className="bar" />
-                <span className="bar" />
-              </button>
-
-              {/* nav links */}
-              <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-                <a
-                  href="#services"
-                  className={activeSection === 'services' ? 'active' : ''}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Services
-                </a>
-                <a
-                  href="#about"
-                  className={activeSection === 'about' ? 'active' : ''}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  About
-                </a>
-                <a
-                  href="#faq"
-                  className={activeSection === 'faq' ? 'active' : ''}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  FAQ
-                </a>
-
-               
-               {/* CTA pill */}
-                <a
-                  href="#contact"  
-                 className={`btn-primary ${activeSection === 'contact' ? 'active' : ''}`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Get&nbsp;started
-                </a>
-
-                {/* icon‑only theme toggle */}
-                <button
-                  className="theme-toggle"
-                  onClick={toggleDarkMode}
-                  aria-label="Toggle theme"
-                >
-                  {isDarkMode ? <FaSun /> : <FaMoon />}
-                </button>
-              </nav>
-
-              {/* contained progress bar */}
-              <div
-                className="scroll-indicator"
-                style={{ width: `${scrollProgress}%` }}
-              />
-            </div>
-          </header>
+            </header>
 
       {/* Hero Slideshow */}
       <section className="hero-banner" id="hero">
@@ -198,22 +211,22 @@ useEffect(() => {
         <p className="section-subtitle">What we do best</p>
         <div className="card-grid">
          {[
-          { title: 'App development', img: 'dev.jpg', desc: 'Mobile and web app solutions tailored to your business.', details: 'We build robust mobile and web apps tailored to your business needs, supporting growth and scalability.' },
-          { title: 'Automation', img: 'automation.jpg', desc: 'Automate routine workflows and reduce operational drag.', details: 'We design and implement automated workflows to streamline operations, boost productivity, and reduce errors.' },
-          { title: 'AI solutions', img: 'ai.jpg', desc: 'Use analytics to gain insights and make smarter decisions.', details: 'From machine learning to data-driven decision-making, we help integrate AI into your tools and processes.' }
-        ].map((service, i) => (
-          <div className="card hover-3d" key={i} data-aos="zoom-in">
-            <img src={`${process.env.PUBLIC_URL}/images/${service.img}`} alt={service.title} />
-            <h3>{service.title}</h3>
-            <p>{service.desc}</p>
-            <button className="btn-outline" onClick={() => {
-              setSelectedService(service);
-              setModalOpen(true);
-            }}>
-              Learn more
-            </button>
-          </div>
-        ))}
+           { title: 'App development', img: 'dev.jpg', desc: 'Mobile and web app solutions tailored to your business.', details: 'We build robust mobile and web apps tailored to your business needs, supporting growth and scalability.' },
+           { title: 'Automation', img: 'automation.jpg', desc: 'Automate routine workflows and reduce operational drag.', details: 'We design and implement automated workflows to streamline operations, boost productivity, and reduce errors.' },
+           { title: 'AI solutions', img: 'ai.jpg', desc: 'Use analytics to gain insights and make smarter decisions.', details: 'From machine learning to data-driven decision-making, we help integrate AI into your tools and processes.' }
+         ].map((service, i) => (
+           <div className="card hover-3d" key={i} data-aos="zoom-in">
+             <img src={`${process.env.PUBLIC_URL}/images/${service.img}`} alt={service.title} />
+             <h3>{service.title}</h3>
+             <p>{service.desc}</p>
+             <button className="btn-outline" onClick={() => {
+               setSelectedService(service);
+               setModalOpen(true);
+             }}>
+               Learn more
+             </button>
+           </div>
+         ))}
         </div>
       </section>
       {modalOpen && selectedService && (
@@ -226,7 +239,7 @@ useEffect(() => {
         </div>
       )}
 
-     {/* Capabilities Section (Ticker Style & Centered) */}
+      {/* Capabilities Section (Ticker Style & Centered) */}
       <section className="about-section section-divider" id="about" data-aos="fade-right">
         <h2>What We Offer</h2>
         <p className="section-subtitle">Solutions tailored for you</p>
@@ -283,7 +296,6 @@ useEffect(() => {
         ))}
       </section>
 
-   
 
       <footer className="footer section-divider" id="contact" data-aos="fade-up">
         <div className="footer-content">
@@ -292,12 +304,12 @@ useEffect(() => {
             <h2>Let’s Connect</h2>
             <p><strong>Email:</strong> inquiry@neuro-mesh.com</p>
             <p><strong>Phone:</strong> +91-7776994297</p>
-            
+
             <div className="social-icons">
               <a href="#">Blogs</a>
               <a href="#">Instagram</a>
               <a href="#">LinkedIn</a>
-            </div>    
+            </div>
           </div>
 
           {/* Right Side - Contact Form */}
