@@ -18,34 +18,39 @@ function App() {
   const [selectedService, setSelectedService] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    AOS.init({ duration: 1000, once: false });
+useEffect(() => {
+  AOS.init({ duration: 1000, once: false });
 
-    const theme = localStorage.getItem('theme');
-    if (theme === 'dark') setIsDarkMode(true);
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') setIsDarkMode(true);
 
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+  /* —— SCROLL HANDLER —— */
+  const handleScroll = () => {
+    setShowScrollTop(window.scrollY > 300);
 
-      const scrolled = window.scrollY;
-      const totalHeight = document.body.scrollHeight - window.innerHeight;
-      setScrollProgress((scrolled / totalHeight) * 100);
+    // progress bar
+    const total = document.body.scrollHeight - window.innerHeight;
+    setScrollProgress((window.scrollY / total) * 100);
 
-      const sectionIds = ['services', 'about', 'faq', 'contact'];
-      sectionIds.forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            setActiveSection(id);
-          }
-        }
-      });
-    };
+    // sections to watch (add hero if you like)
+    const ids = ['services', 'about', 'faq', 'contact'];   // or ['hero', …]
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    let found = '';              // default → none active
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (r.top <= 100 && r.bottom >= 100) {
+        found = id;
+        break;
+      }
+    }
+    setActiveSection(found);     // '' when top of page
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -90,29 +95,81 @@ function App() {
   return (
     <main>
       <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
+          {/* ───────── Navbar ───────── */}
+          <header className="navbar">
+            <div className="navbar-inner">{/* NEW wrapper */} 
+              {/* logo */}
+              <div className="logo">
+                <img
+                 src={`${process.env.PUBLIC_URL}/${
+                    isDarkMode ? 'images/Logo_Dark.png' : 'images/Logo_Light.png'
+                  }`}
+                  alt="NeuroMesh logo"
+                />
+              </div>
 
-      {/* Navbar */}
-       <header className={`navbar ${isDarkMode ? 'dark' : ''}`}>
-        <div className="logo">
-          <img src={`${process.env.PUBLIC_URL}/${isDarkMode ? "images/Logo_Dark.png" : "images/Logo_Light.png"}`} alt="NeuroMesh Logo" />
-        </div>
+              {/* hamburger */}
+              <button
+                className={`hamburger ${isMenuOpen ? 'open' : ''}`}
+                onClick={() => setIsMenuOpen(o => !o)}
+                aria-label="Toggle navigation"
+              >
+                <span className="bar" />
+                <span className="bar" />
+                <span className="bar" />
+              </button>
 
-        <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          <div className={`bar ${isMenuOpen ? 'open' : ''}`}></div>
-          <div className={`bar ${isMenuOpen ? 'open' : ''}`}></div>
-          <div className={`bar ${isMenuOpen ? 'open' : ''}`}></div>
-        </button>
+              {/* nav links */}
+              <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+                <a
+                  href="#services"
+                  className={activeSection === 'services' ? 'active' : ''}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Services
+                </a>
+                <a
+                  href="#about"
+                  className={activeSection === 'about' ? 'active' : ''}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  About
+                </a>
+                <a
+                  href="#faq"
+                  className={activeSection === 'faq' ? 'active' : ''}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  FAQ
+                </a>
 
-        <nav className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-          <a href="#services" className={activeSection === 'services' ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>Services</a>
-          <a href="#about" className={activeSection === 'about' ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>About</a>
-          <a href="#faq" className={activeSection === 'faq' ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>FAQ</a>
-          <a href="#contact" className={`btn-primary ${activeSection === 'contact' ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}>Get started</a>
-          <button className="toggle-theme" onClick={toggleDarkMode}>
-            {isDarkMode ? <FaSun /> : <FaMoon />}<span className="theme-label">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
-        </nav>
-      </header>
+               
+               {/* CTA pill */}
+                <a
+                  href="#contact"  
+                 className={`btn-primary ${activeSection === 'contact' ? 'active' : ''}`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Get&nbsp;started
+                </a>
+
+                {/* icon‑only theme toggle */}
+                <button
+                  className="theme-toggle"
+                  onClick={toggleDarkMode}
+                  aria-label="Toggle theme"
+                >
+                  {isDarkMode ? <FaSun /> : <FaMoon />}
+                </button>
+              </nav>
+
+              {/* contained progress bar */}
+              <div
+                className="scroll-indicator"
+                style={{ width: `${scrollProgress}%` }}
+              />
+            </div>
+          </header>
 
       {/* Hero Slideshow */}
       <section className="hero-banner" id="hero">
